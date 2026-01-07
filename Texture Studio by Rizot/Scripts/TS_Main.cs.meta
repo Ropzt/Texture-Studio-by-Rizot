@@ -1,0 +1,20 @@
+fileFormatVersion: 2
+guid: fecc9ba3aa755764ba0290c398e6dd40
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - red: {instanceID: 0}
+  - green: {instanceID: 0}
+  - blue: {instanceID: 0}
+  - alpha: {instanceID: 0}
+  - outBaseTexture: {instanceID: 0}
+  - initRT: {fileID: 7200000, guid: 32a42ab126f9d8f48ad6299cf366b22a, type: 3}
+  - initRTTexture: {fileID: 7200000, guid: be1e4b77b0bd222448227befdddec6c9, type: 3}
+  - stampPacker: {fileID: 7200000, guid: fcbc9b2c4f38bda45af3ddae26e58d36, type: 3}
+  - stamper: {fileID: 7200000, guid: ddcc953110baa6c4581cbdf98e2dd08c, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecc9ba3aa755764ba0290c398e6dd40, type: 3}
+  m_Name: TS
+  m_EditorClassIdentifier: Assembly-CSharp::TS_Main
+  red: {fileID: 0}
+  green: {fileID: 0}
+  blue: {fileID: 0}
+  alpha: {fileID: 0}
+  redSource: 0
+  greenSource: 1
+  blueSource: 2
+  alphaSource: 0
+  useAlphaMask: 1
+  useBilinearFilter: 1
+  useAntiAliasing: 1
+  useSeamless: 1
+  stampDimensions: {x: 1024, y: 1024}
+  stampIterations: 1
+  rotation: 0
+  randRotationBool: 0
+  randRotationSeed: 0
+  randRotationRange: {x: 0, y: 0}
+  displace: {x: 0, y: 0}
+  stampRadius: 250
+  randDisplaceBool: 0
+  randDisplaceSeed: 0
+  scale: {x: 1, y: 1}
+  randScaleBool: 0
+  randScaleSeed: 0
+  randScaleXRange: {x: 1, y: 1}
+  randScaleYRange: {x: 1, y: 1}
+  outBaseColorEnum: 0
+  outBaseColor: {r: 1, g: 1, b: 1, a: 1}
+  outBaseTexture: {fileID: 0}
+  outputDimensions: {x: 4096, y: 4096}
+  outputFormat: 52
+  outFileName: result
+  fileFormat: 2
+  initRT: {fileID: 7200000, guid: 32a42ab126f9d8f48ad6299cf366b22a, type: 3}
+  initRTTexture: {fileID: 7200000, guid: be1e4b77b0bd222448227befdddec6c9, type: 3}
+  stampPacker: {fileID: 7200000, guid: fcbc9b2c4f38bda45af3ddae26e58d36, type: 3}
+  stamper: {fileID: 7200000, guid: ddcc953110baa6c4581cbdf98e2dd08c, type: 3}

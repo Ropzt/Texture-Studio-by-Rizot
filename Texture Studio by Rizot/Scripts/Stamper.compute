@@ -1,0 +1,103 @@
+#include "UnityCG.cginc"
+#include "UnityStandardConfig.cginc"
+#include "HLSLSupport.cginc"
+#include "UnityStandardCore.cginc"
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Stamp;
+float2 StampDimensions;
+
+float2 Displace;
+float2 Scale;
+float4 RotationValues;
+
+float alphaMaskBool; // if 0 -> alpha is mask and stamp conditionaly overrides result / if 1 -> alpha not mask and stamp always overrides result
+
+bool UseBilinearFilter;
+bool UseAntiAliasing;
+bool UseSeamless;
+
+RWTexture2D<float4> Result;
+float2 ResultDimensions;
+
+
+float4 BilinearFiltering(float2 pos)
+{
+    int2 p0 = floor(pos);
+    float2 t  = frac(pos);
+    
+    float4 s00 = Stamp[p0];
+    float4 s10 = Stamp[p0 + int2(1, 0)];
+    float4 s01 = Stamp[p0 + int2(0, 1)];
+    float4 s11 = Stamp[p0 + int2(1, 1)];
+
+    float4 sx0 = lerp(s00, s10, t.x);
+    float4 sx1 = lerp(s01, s11, t.x);
+    return lerp(sx0, sx1, t.y);
+}
+
+float4 GetPixel(uint2 i, float2 p)
+{
+    float2 center = (float2((float)StampDimensions.x , (float)StampDimensions.y) / 2) * Scale;
+    float2 pos = (mul( p - Displace, float2x2(RotationValues.x, RotationValues.y, RotationValues.z, RotationValues.w)) + center) / Scale;
+
+    float4 st;
+
+    if (UseBilinearFilter)
+        st = BilinearFiltering(pos - 0.5); // -0.5 to center texel
+    else
+        st = Stamp[pos];
+
+    
+    float t = max(alphaMaskBool, st.w);
+    
+    if (pos.x < 0 || pos.y < 0 || pos.x >= StampDimensions.x || pos.y >= StampDimensions.y)
+        t=0;
+
+    float fall = 1;
+    if (UseAntiAliasing) // Homemade cheapest anti-aliasing like a boss
+    {
+        if (pos.x < 1 || pos.y < 1 || pos.x >= StampDimensions.x -1 || pos.y >= StampDimensions.y -1)
+            fall = 0.25;
+        else if (pos.x < 2 || pos.y < 2 || pos.x >= StampDimensions.x -2 || pos.y >= StampDimensions.y -2)
+            fall = 0.5;
+    }
+    
+    
+    float4 vt = float4(t,t,t,t);
+
+    return lerp(Result[i], lerp(Result[i], st, fall), vt);
+}
+
+
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    Result[id.xy] = GetPixel(id.xy, id.xy);
+    
+    if (UseSeamless)
+    {
+        float2 posLeft = id.xy - float2(ResultDimensions.x, 0);
+        float2 posRight = id.xy + float2(ResultDimensions.x, 0);
+        float2 posDown = id.xy - float2(0, ResultDimensions.y);
+        float2 posUp = id.xy + float2(0, ResultDimensions.y);
+
+        float2 posLeftUp = id.xy + float2(-ResultDimensions.x, ResultDimensions.y);
+        float2 posRightUp = id.xy + float2(ResultDimensions.x, ResultDimensions.y);
+        float2 posLeftDown = id.xy + float2(-ResultDimensions.x, -ResultDimensions.y);
+        float2 posRightDown = id.xy + float2(ResultDimensions.x, -ResultDimensions.y);
+
+        Result[id.xy] = GetPixel(id.xy, posLeft);
+        Result[id.xy] = GetPixel(id.xy, posRight );
+        Result[id.xy] = GetPixel(id.xy, posDown );
+        Result[id.xy] = GetPixel(id.xy, posUp );
+        Result[id.xy] = GetPixel(id.xy, posLeftUp );
+        Result[id.xy] = GetPixel(id.xy, posRightUp);
+        Result[id.xy] = GetPixel(id.xy, posLeftDown );
+        Result[id.xy] = GetPixel(id.xy, posRightDown);
+    }
+}

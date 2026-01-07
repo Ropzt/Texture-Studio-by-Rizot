@@ -1,0 +1,24 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+Texture2D InTex;
+float2 Scale;
+float4 ChannelVector;
+float4 Destination;
+RWTexture2D<float4> Stamp;
+bool Invert;
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    float4 sourceVector = InTex[(id.xy / Scale)] * ChannelVector;
+    float sourceVal = max(sourceVector.x, max(sourceVector.y, max(sourceVector.z, sourceVector.w)));
+    if (Invert)
+        sourceVal = 1 - sourceVal;
+    
+    float4 stampUntouch = Stamp[id.xy] * (float4(1,1,1,1) - Destination);
+    float4 des = Destination * sourceVal;
+    Stamp[id.xy] = stampUntouch + des;
+}
